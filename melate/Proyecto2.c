@@ -9,31 +9,65 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#define K_ARR_SIZE 6
-//CAMBIAR TAMAÑO TICKETS ANTES DE SUBIR
-#define K_NUM_TICKETS 3
+// Definicion de variables estaticas
+#define K_NUMS_TICKET 6
+/*          -------------------------------------
+            CAMBIAR TAMAÑO TICKETS ANTES DE SUBIR
+            -------------------------------------
+*/
+#define K_TICKETS 3
 #define true 1
 #define false 0
 
-int i, j, acumTicketIndex = 0;
-
+// Creacion de la estructura Ticket
 typedef struct
 {
     int id;
-    int numArray[K_ARR_SIZE];
+    int numArray[K_NUMS_TICKET];
     int isWinner;
+    int place;
 }Ticket;
 
-Ticket tickets[K_NUM_TICKETS];
+// Creacion de variables globales
+int i, j, acumTicketIndex = 0;
+Ticket tickets[K_TICKETS];
+
+// Declaracion de funciones auxiliares
+int verifyRepeatedNumbers(Ticket t);
+void verifyRange(int *value, int max, int min);
+void shellSort(int t[]);
+void pauseAndWipe();
+
+// Declaracion de funciones principales
+void captureTicket();
+void drawNumbers();
+void ticketReportByCapture();
+void ticketReportByWinner();
+void restartApp();
+void menu();
+
+// ----------------- Funciones Auxiliares -----------------
 
 int verifyRepeatedNumbers(Ticket t)
 {
-    for (i = 0; i < K_ARR_SIZE; i++)
-        for (j = 0; j < K_ARR_SIZE; j++)
+    for (i = 0; i < K_NUMS_TICKET; i++)
+        for (j = 0; j < K_NUMS_TICKET; j++)
             if(t.numArray[i] == t.numArray[j] && i != j)
                 return false;
     return true;
+}
+
+void verifyRange(int *value, int max, int min)
+{
+    if(*value > max || *value < min)
+    {
+        do {
+            printf("\tN%cmero no es valido, intente de nuevo: ", 163);
+            scanf("%i", &*value);
+        } while(*value > max || *value < min);
+    }
 }
 
 void shellSort(int t[])
@@ -42,7 +76,7 @@ void shellSort(int t[])
 
     j = 0;
 
-    jump = K_ARR_SIZE;
+    jump = K_NUMS_TICKET;
 
     while (jump > 0)
     {
@@ -50,7 +84,7 @@ void shellSort(int t[])
         do
         {
             end = true;
-            k = K_ARR_SIZE-jump ;
+            k = K_NUMS_TICKET-jump ;
             for (i = 0; i < k; i++)
             {
                 j = i + jump;
@@ -66,17 +100,6 @@ void shellSort(int t[])
     }
 }
 
-void verifyRange(int *value, int max, int min)
-{
-    if(*value > max || *value < min)
-    {
-        do {
-            printf("\tN%cmero no es valido, intente de nuevo: ", 163, 162);
-            scanf("%i", &*value);
-        } while(*value > max || *value < min);
-    }
-}
-
 void pauseAndWipe()
 {
     printf("\n\n");
@@ -84,12 +107,14 @@ void pauseAndWipe()
     system("cls");
 }
 
+// ----------------- Funciones Principales -----------------
+
 void captureTicket()
 {
-    if(acumTicketIndex < K_NUM_TICKETS)
+    if(acumTicketIndex < K_TICKETS)
     {
         printf("\n\t------------ Capturando boleta %i ------------\n", acumTicketIndex + 1);
-        for(i = 0; i < K_ARR_SIZE; i++)
+        for(i = 0; i < K_NUMS_TICKET; i++)
         {
             printf("\n\tIntroduce el valor %i de su boleta: ", i + 1);
             scanf("%i", &tickets[acumTicketIndex].numArray[i]);
@@ -109,7 +134,7 @@ void captureTicket()
         }
     }
     else
-        printf("\n\tSe excedi%c el numero de boletas.", 162);
+        printf("\n\tERROR: Se excedi%c el numero de boletas.", 162);
     return;
 }
 
@@ -120,7 +145,23 @@ void drawNumbers()
 
 void ticketReportByCapture()
 {
-    printf("\n\tHacer algo");
+    if(acumTicketIndex > 0)
+    {
+        char num[31];
+        int index = 0;
+
+        printf("\n\t------------ Boletas Capturadas ------------\n");
+        for(i = 0; i < acumTicketIndex; i++)
+        {
+            for(j = 0; j < K_NUMS_TICKET; j++)
+                index += sprintf(&num[index], " %i ", tickets[i].numArray[j]);
+
+            printf("\n\tIdentificador de la boleta: %i\tNumeros: %s", tickets[i].id, num);
+            index = 0;
+        }
+    }
+    else
+        printf("\n\tERROR: No hay boletas.");
 }
 
 void ticketReportByWinner()
