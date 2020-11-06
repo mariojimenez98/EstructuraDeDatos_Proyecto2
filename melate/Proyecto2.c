@@ -300,7 +300,7 @@ void drawNumbers()
 
 void ticketReportByCapture()
 {
-    if(acumTicketIndex > 0)
+    if(hasCaptured)
     {
         printf("\n\t------------ Boletas Capturadas ------------\n");
         for(i = 0; i < acumTicketIndex; i++)
