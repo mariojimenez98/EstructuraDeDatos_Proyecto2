@@ -44,6 +44,7 @@ Ticket tickets[K_TICKETS];
 // Declaracion de funciones auxiliares
 int verifyRepeatedNumbers(int arr[], int size);
 void verifyRange(int *value, int max, int min);
+void convertArrayToString();
 void shellSort(int t[]);
 void insertStack(int *draw, int *top, int max, int num);
 void removeStack(int *top);
@@ -51,6 +52,7 @@ int isStackFull(int top, int max);
 int isStackEmpty(int top);
 void generateWinningNumbers(int draw[], int size, int top);
 void printDrawnNumbers(int draw[], int size);
+int binarySearch(int t[], int size, int num);
 void clearStack(int top);
 void pauseAndWipe();
 
