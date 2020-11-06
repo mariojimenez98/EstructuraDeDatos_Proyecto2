@@ -171,7 +171,16 @@ void ticketReportByWinner()
 
 void restartApp()
 {
-    printf("\n\tHacer algo");
+    for (i = 0; i < acumTicketIndex; i++){
+        tickets[i].id =0;
+        for (j = 0; j < K_NUMS_TICKET; j++){
+            tickets[i].numArray[j] = 0;
+        }
+        tickets[i].isWinner =0;
+        tickets[i].place =0;
+    }
+    acumTicketIndex = 0;
+
 }
 
 void menu()
