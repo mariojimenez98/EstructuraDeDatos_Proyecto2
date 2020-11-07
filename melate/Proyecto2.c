@@ -38,6 +38,7 @@ typedef struct
 int i, j, k, acumTicketIndex = 0;
 int arrMelate[K_MELATE], arrRevancha[K_REVANCHA], arrRevanchita[K_REVANCHA];
 int topMelate = 0, topRevancha = 0, topRevanchita = 0;
+int countMelate = 0, countRevancha = 0, countRevanchita = 0;
 int hasCaptured = false, hasDrawn = false;
 Ticket tickets[K_TICKETS];
 
@@ -53,6 +54,8 @@ int isStackEmpty(int top);
 void generateWinningNumbers(int draw[], int size, int top);
 void printDrawnNumbers(int draw[], int size);
 int binarySearch(int t[], int size, int num);
+void setTicketPlacement(int index, int drawType, int isMelate);
+void printWinningTickets(int drawType);
 void clearStack(int top);
 void pauseAndWipe();
 
@@ -211,6 +214,57 @@ int binarySearch(int t[], int size, int num)
     return isFound;
 }
 
+void setTicketPlacement(int index, int drawType, int isMelate)
+{
+    if(isMelate)
+    {
+        if(countMelate == 6)
+            tickets[index].place[drawType] = 1;
+        else if(countMelate == 5 && binarySearch(tickets[index].numArray, K_NUMS_TICKET, arrMelate[K_MELATE]))
+            tickets[index].place[drawType] = 2;
+        else if(countMelate == 5)
+            tickets[index].place[drawType] = 3;
+    }
+    else
+    {
+        if(countRevancha == 6)
+            tickets[index].place[drawType] = 1;
+        else if(countRevancha == 5)
+            tickets[index].place[drawType] = 2;
+        else if(countRevancha == 4)
+            tickets[index].place[drawType] = 3;
+    }
+}
+
+void printWinningTickets(int drawType)
+{
+    int hasWinners = false;
+
+    for(i = 0; i < acumTicketIndex; i++)
+    {
+        if(tickets[i].place[drawType] == 1)
+        {
+            printf("\n\t1er. lugar --- Boleta: %i\tNumeros: %s", tickets[i].id, tickets[i].numbers);
+            hasWinners = true;
+        }
+        else if(tickets[i].place[drawType] == 2)
+        {
+            printf("\n\t2do. lugar --- Boleta: %i\tNumeros: %s", tickets[i].id, tickets[i].numbers);
+            hasWinners = true;
+        }
+        else if(tickets[i].place[drawType] == 3)
+        {
+            printf("\n\t3er. lugar --- Boleta: %i\tNumeros: %s", tickets[i].id, tickets[i].numbers);
+            hasWinners = true;
+        }
+        else if(!hasWinners)
+        {
+            printf("\n\tNo hay ganadores! Sigue participando.");
+            break;
+        }
+    }
+}
+
 void clearStack(int top)
 {
     for(i = 0; i < top; i++)
@@ -314,8 +368,6 @@ void ticketReportByCapture()
 
 void ticketReportByWinner()
 {
-    int countMelate = 0, countRevancha = 0, countRevanchita = 0;
-
     if(hasCaptured)
         if(hasDrawn)
         {
@@ -325,34 +377,21 @@ void ticketReportByWinner()
                     if(binarySearch(tickets[i].numArray, K_NUMS_TICKET, arrMelate[j]))
                         countMelate++;
                 for(k = 0; k < K_REVANCHA; k++)
+                {
                     if(binarySearch(tickets[i].numArray, K_NUMS_TICKET, arrRevancha[k]))
                         countRevancha++;
                     if(binarySearch(tickets[i].numArray, K_NUMS_TICKET, arrRevanchita[k]))
                         countRevanchita++;
+                }
 
                 // Sorteo Melate
-                if(countMelate == 6)
-                    tickets[i].place[0] = 1;
-                else if(countMelate == 5 && binarySearch(tickets[i].numArray, K_NUMS_TICKET, arrMelate[K_MELATE]))
-                    tickets[i].place[0] = 2;
-                else if(countMelate == 5)
-                    tickets[i].place[0] = 3;
+                setTicketPlacement(i, 0, true);
 
                 // Sorteo Revancha
-                if(countRevancha == 6)
-                    tickets[i].place[1] = 1;
-                else if(countRevancha == 5)
-                    tickets[i].place[1] = 2;
-                else if(countRevancha == 4)
-                    tickets[i].place[1] = 3;
+                setTicketPlacement(i, 1, false);
 
                 // Sorteo Revanchita
-                if(countRevanchita == 6)
-                    tickets[i].place[2] = 1;
-                else if(countRevanchita == 5)
-                    tickets[i].place[2] = 2;
-                else if(countRevanchita == 4)
-                    tickets[i].place[2] = 3;
+                setTicketPlacement(i, 2, false);
 
                 countMelate = 0;
                 countRevancha = 0;
@@ -360,49 +399,18 @@ void ticketReportByWinner()
             }
 
             printf("\n\t----------------- Ganadores Melate -----------------\n");
-            for(i = 0; i < acumTicketIndex; i++)
-            {
-                if(tickets[i].place[0] == 1)
-                    printf("\n\t1er. lugar --- Boleta: %i\tNumeros: %s", tickets[i].id, tickets[i].numbers);
-                else if(tickets[i].place[0] == 2)
-                    printf("\n\t2do. lugar --- Boleta: %i\tNumeros: %s", tickets[i].id, tickets[i].numbers);
-                else if(tickets[i].place[0] == 3)
-                    printf("\n\t3er. lugar --- Boleta: %i\tNumeros: %s", tickets[i].id, tickets[i].numbers);
-                else
-                    printf("\n\tNo hay ganadores! Sigue participando.");
-            }
+            printWinningTickets(0);
 
             printf("\n\n\t----------------- Ganadores Revancha -----------------\n");
-            for(j = 0; j < acumTicketIndex; j++)
-            {
-                if(tickets[j].place[1] == 1)
-                    printf("\n\t1er. lugar --- Boleta: %i\tNumeros: %s", tickets[j].id, tickets[j].numbers);
-                else if(tickets[j].place[1] == 2)
-                    printf("\n\t2do. lugar --- Boleta: %i\tNumeros: %s", tickets[j].id, tickets[j].numbers);
-                else if(tickets[j].place[1] == 3)
-                    printf("\n\t3er. lugar --- Boleta: %i\tNumeros: %s", tickets[j].id, tickets[j].numbers);
-                else
-                    printf("\n\tNo hay ganadores! Sigue participando.");
-            }
+            printWinningTickets(1);
 
             printf("\n\n\t----------------- Ganadores Revanchita -----------------\n");
-            for(k = 0; k < acumTicketIndex; k++)
-            {
-                if(tickets[k].place[2] == 1)
-                    printf("\n\t1er. lugar --- Boleta: %i\tNumeros: %s", tickets[k].id, tickets[k].numbers);
-                else if(tickets[k].place[2] == 2)
-                    printf("\n\t2do. lugar --- Boleta: %i\tNumeros: %s", tickets[k].id, tickets[k].numbers);
-                else if(tickets[k].place[2] == 3)
-                    printf("\n\t3er. lugar --- Boleta: %i\tNumeros: %s", tickets[k].id, tickets[k].numbers);
-                else
-                    printf("\n\tNo hay ganadores! Sigue participando.");
-            }
+            printWinningTickets(2);
         }
         else
             printf("\n\tERROR: No se han generado los n%cmeros ganadores", 163);
     else
         printf("\n\tERROR: Se deben capturar boletas antes de imprimir a los ganadores");
-    //binarySearch(tickets[0].numArray, K_NUMS_TICKET, 3);
 }
 
 void restartApp()
